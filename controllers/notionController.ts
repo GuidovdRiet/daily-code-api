@@ -16,7 +16,8 @@ const databaseId = process.env.NOTION_DATABASE_ID;
  * Docs: https://developers.notion.com/reference/post-database-query
  */
 export async function getPages(_: Request, res: Response) {
-  if (!databaseId) return;
+  if (!databaseId)
+    return res.status(404).json({ error: `❌ No database id provided` });
 
   const pages = await notionClient.databases
     .query({
@@ -47,6 +48,19 @@ export async function getPages(_: Request, res: Response) {
   }
 }
 
-export async function getPage(pageId: string) {
-  return;
+/**
+ * Get a single page
+ * Notion docs: https://developers.notion.com/reference/retrieve-a-page
+ */
+export async function getPage(req: Request, res: Response) {
+  const { pageId } = req.params;
+  const page = await notionClient.blocks.children
+    .list({ block_id: pageId, page_size: 50 })
+    .catch((err) => {
+      res.status(404).json({ error: `❌ ${err.message}` });
+    });
+
+  if (page) {
+    return res.status(200).json(page);
+  }
 }

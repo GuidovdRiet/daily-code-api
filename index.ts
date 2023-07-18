@@ -18,6 +18,7 @@ app.get("/", (req: Request, res: Response) => {
 /**
  * Returns Daily Codes
  */
+app.get("/daily-code/api/pages/:pageId", notionController.getPage);
 app.get("/daily-code/api/pages", notionController.getPages);
 
 app.listen(port, () => {
