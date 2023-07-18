@@ -64,3 +64,39 @@ export async function getPage(req: Request, res: Response) {
     return res.status(200).json(page);
   }
 }
+
+/**
+ * Get a random page
+ */
+export async function getRandomPage(_: Request, res: Response) {
+
+  const pages = await notionClient.databases
+    .query({
+      database_id: databaseId || "",
+      filter: {
+        or: [
+          {
+            property: NOTION_COLUMNS.STATUS,
+            status: {
+              equals: NOTION_CELL_VALUES.NOT_SENT,
+            },
+          },
+        ],
+      },
+      sorts: [
+        {
+          timestamp: "last_edited_time",
+          direction: "ascending",
+        },
+      ],
+    })
+    .catch((err) => {
+      res.status(404).json({ error: `❌ ${err.message}` });
+    }
+    );
+
+  if (pages) {
+    const randomPage = pages.results[Math.floor(Math.random() * pages.results.length)];
+    return res.status(200).json(randomPage);
+  } 
+}

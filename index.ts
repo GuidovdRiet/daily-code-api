@@ -8,18 +8,21 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT;
 
-/**
- * Returns Daily Codes
- */
+
 app.get("/", (req: Request, res: Response) => {
   res.send("Express + TypeScript Server");
 });
 
-/**
- * Returns Daily Codes
- */
-app.get("/daily-code/api/pages/:pageId", notionController.getPage);
+// Get all pages
 app.get("/daily-code/api/pages", notionController.getPages);
+
+// Get random page
+app.get("/daily-code/api/pages/random", notionController.getRandomPage);
+
+// Get page by id
+app.get("/daily-code/api/pages/:pageId", notionController.getPage);
+
+
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
